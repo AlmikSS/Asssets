@@ -94,7 +94,7 @@ namespace KofeyekToolkit.TickSystem
             {
                 foreach (var tickable in tickables)
                 {
-                    if (tickable.Phase is TickPhase.StartPhase or TickPhase.InputPhase or TickPhase.SystemPhase)
+                    if (tickable.Phase is TickPhase.StartPhase or TickPhase.InputPhase or TickPhase.SystemPhase or TickPhase.EndPhase)
                     {
                         tickable.Tick(deltaTime);
                         continue;

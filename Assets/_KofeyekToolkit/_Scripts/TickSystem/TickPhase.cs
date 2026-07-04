@@ -9,5 +9,6 @@
         PostSimulationPhase,
         PresentationPhase,
         SpawnDespawnPhase,
+        EndPhase
     }
 }
