@@ -1,4 +1,5 @@
-﻿using KofeyekToolkit.Core.Options;
+﻿using KofeyekToolkit.Core.LifeCycle;
+using KofeyekToolkit.Core.Options;
 using KofeyekToolkit.Core.TickSystem;
 using UnityEngine;
 
@@ -13,7 +14,9 @@ namespace KofeyekToolkit.Core
         private static void Initialize()
         {
             var tickService = new TickService(TickOptions.TICK_RATE);
+            var spawnService = new SpawnService(tickService);
             
+            tickService.Register(spawnService);
         }
     }
 }
