@@ -7,8 +7,14 @@ using KofeyekToolkit.DevConsole;
 namespace KofeyekToolkit.Core.TickSystem
 {
     /// <summary>
-    /// Сервис детерминированных тиков, разделенных на каналы, такие как System, UI, Gameplay и Presentation
+    /// Централизованный сервис управления детерминированными тиками с разделением по каналам.
+    /// Обеспечивает фиксированный шаг для игровой логики (Gameplay) и
+    /// плавающий шаг для систем, UI и презентационных слоёв.
     /// </summary>
+    /// <remarks>
+    /// Сервис поддерживает очередь регистрации/отмены регистрации тикеров,
+    /// паузу игровой логики и измерение производительности.
+    /// </remarks>
     [Service]
     public sealed class TickService
     {
@@ -31,17 +37,44 @@ namespace KofeyekToolkit.Core.TickSystem
         public float TickInterval { get; private set; }
         public bool IsGameplayPaused { get; private set; }
         
+        /// <summary>
+        /// Конструктор сервиса тиков.
+        /// </summary>
+        /// <param name="tickRate">Целевое количество тиков в секунду для игровой логики.</param>
         public TickService(int tickRate)
         {
             ChangeTickRate(tickRate);
         }
         
+        /// <summary>
+        /// Помещает тикер в очередь на регистрацию.
+        /// Регистрация будет применена в ближайшем кадре.
+        /// </summary>
+        /// <param name="tickable">Объект, реализующий интерфейс ITickable.</param>
         public void Register(ITickable tickable) => _registerQueue.Enqueue(tickable);
+        /// <summary>
+        /// Помещает тикер в очередь на отмену регистрации.
+        /// Отмена будет применена в ближайшем кадре.
+        /// </summary>
+        /// <param name="tickable">Объект, реализующий интерфейс ITickable.</param>
         public void Unregister(ITickable tickable) => _unregisterQueue.Enqueue(tickable);
 
+        /// <summary>
+        /// Приостанавливает выполнение игровых тиков (Gameplay).
+        /// Системные, UI и презентационные тики продолжают работу.
+        /// </summary>
         public void Pause() => IsGameplayPaused = true;
+        /// <summary>
+        /// Возобновляет выполнение игровых тиков (Gameplay).
+        /// </summary>
         public void Resume() => IsGameplayPaused = false;
 
+        /// <summary>
+        /// Основной цикл обновления. Вызывается каждый кадр.
+        /// Обрабатывает очереди регистрации, выполняет тики по каналам
+        /// с учетом паузы и фиксированного шага игровой логики.
+        /// </summary>
+        /// <param name="unscaledDeltaTime">Неизменяемая дельта времени (не зависит от Time.timeScale).</param>
         internal void Update(float unscaledDeltaTime)
         {
             _tickTimer += unscaledDeltaTime;
@@ -55,8 +88,8 @@ namespace KofeyekToolkit.Core.TickSystem
             ReleaseRegisterQueue();
             ReleaseUnregisterQueue();
             
-            Tick(_systems.ToArray(), TickInterval);
-            Tick(_ui.ToArray(), TickInterval);
+            Tick(_systems.ToArray(), unscaledDeltaTime);
+            Tick(_ui.ToArray(), unscaledDeltaTime);
 
             if (!IsGameplayPaused)
             {
@@ -75,10 +108,14 @@ namespace KofeyekToolkit.Core.TickSystem
                     _accumulator -= TickInterval;
                 }
                 
-                Tick(_presentation.ToArray(), TickInterval);
+                Tick(_presentation.ToArray(), unscaledDeltaTime);
             }
         }
 
+        /// <summary>
+        /// Обрабатывает очередь регистрации тикеров.
+        /// Добавляет тикеры в соответствующие списки по типу интерфейса.
+        /// </summary>
         private void ReleaseRegisterQueue()
         {
             while (_registerQueue.Count > 0)
@@ -103,6 +140,10 @@ namespace KofeyekToolkit.Core.TickSystem
             }
         }
 
+        /// <summary>
+        /// Обрабатывает очередь отмены регистрации тикеров.
+        /// Удаляет тикеры из соответствующих списков по типу интерфейса.
+        /// </summary>
         private void ReleaseUnregisterQueue()
         {
             while (_unregisterQueue.Count > 0)
@@ -131,6 +172,11 @@ namespace KofeyekToolkit.Core.TickSystem
             }
         }
 
+        /// <summary>
+        /// Выполняет тик для массива тикеров с переданной дельтой времени.
+        /// </summary>
+        /// <param name="tickables">Массив объектов, реализующих ITickable.</param>
+        /// <param name="deltaTime">Дельта времени для данного тика.</param>
         private void Tick(ITickable[] tickables, float deltaTime)
         {
             foreach (var tickable in tickables)
@@ -139,6 +185,12 @@ namespace KofeyekToolkit.Core.TickSystem
             }
         }
 
+        /// <summary>
+        /// Изменяет целевой тикрейт игровой логики.
+        /// Пересчитывает интервал тика и сбрасывает аккумулятор.
+        /// Доступна через консольную команду "change_tick_rate".
+        /// </summary>
+        /// <param name="newTickRate">Новое количество тиков в секунду.</param>
         [Command("change_tick_rate", "Изменяет текущий tick rate игры.")]
         private void ChangeTickRate(int newTickRate)
         {
