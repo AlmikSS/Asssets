@@ -191,7 +191,7 @@ namespace KofeyekToolkit.Core.TickSystem
         /// Доступна через консольную команду "change_tick_rate".
         /// </summary>
         /// <param name="newTickRate">Новое количество тиков в секунду.</param>
-        [Command("change_tick_rate", "Изменяет текущий tick rate игры.")]
+        [Command("change_tick_rate", "Изменяет целевой тикрейт игровой логики.")]
         private void ChangeTickRate(int newTickRate)
         {
             TargetTickRate = newTickRate;
