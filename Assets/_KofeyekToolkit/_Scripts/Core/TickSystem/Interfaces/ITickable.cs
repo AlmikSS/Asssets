@@ -1,8 +1,7 @@
-﻿namespace KofeyekToolkit.TickSystem
+﻿namespace KofeyekToolkit.Core.TickSystem.Interfaces
 {
     public interface ITickable
     {
-        TickPhase Phase { get; }
         void Tick(float deltaTime);
     }
 }
