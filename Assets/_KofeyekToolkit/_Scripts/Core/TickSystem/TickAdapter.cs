@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using KofeyekToolkit.DI.Attributes;
+using UnityEngine;
 
 namespace KofeyekToolkit.Core.TickSystem
 {
@@ -6,9 +7,11 @@ namespace KofeyekToolkit.Core.TickSystem
     {
         private TickService _tickService;
 
-        public void Initialize(TickService tickService)
+        [Inject]
+        private void Initialize(TickService tickService)
         {
             _tickService = tickService;
+            Debug.Log("[TickAdapter] Initialized");
         }
 
         private void Update()

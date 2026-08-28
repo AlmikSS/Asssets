@@ -16,7 +16,8 @@ namespace KofeyekToolkit.DI.Core
         public List<MethodInfo> InjectMethods { get; } = new();
         public List<Action<object, object>> FieldSetters { get; } = new();
         public List<Action<object, object>> PropertySetters { get; } = new();
-        public List<Action<object, object>> MethodInvokers { get; } = new();
+        public List<Action<object, object[]>> MethodInvokers { get; } = new();
+        public bool HasInjectMembers => InjectFields.Count > 0 || InjectProperties.Count > 0 || InjectMethods.Count > 0;
 
         public TypeInfo(Type type)
         {
@@ -68,21 +69,52 @@ namespace KofeyekToolkit.DI.Core
                 var access = Expression.ArrayIndex(argsParam, index);
                 argExpr[i] = Expression.Convert(access, parameters[i].ParameterType);
             }
+
+            var newExpr = Expression.New(ctor, argExpr);
+            var lambda = Expression.Lambda<Func<object[], object>>(
+                Expression.Convert(newExpr, typeof(object)), argsParam);
+            return lambda.Compile();
         }
         
         private Action<object, object> CompileFieldSetter(FieldInfo field)
         {
-            throw new NotImplementedException();
+            var instanceParam = Expression.Parameter(typeof(object[]), "instance");
+            var valueParam = Expression.Parameter(typeof(object), "value");
+            var castInstance = Expression.Convert(instanceParam, field.DeclaringType);
+            var fieldAccess = Expression.Field(castInstance, field);
+            var castValue = Expression.Convert(valueParam, field.FieldType);
+            var assign = Expression.Assign(fieldAccess, castValue);
+            return Expression.Lambda<Action<object, object>>(assign, instanceParam, valueParam).Compile();
         }
         
         private Action<object, object> CompilePropertySetter(PropertyInfo prop)
         {
-            throw new NotImplementedException();
+            var instanceParam = Expression.Parameter(typeof(object), "instance");
+            var valueParam = Expression.Parameter(typeof(object), "value");
+            var castInstance = Expression.Convert(instanceParam, prop.DeclaringType);
+            var propertyAccess = Expression.Property(castInstance, prop);
+            var castValue = Expression.Convert(valueParam, prop.PropertyType);
+            var assign = Expression.Assign(propertyAccess, castValue);
+            return Expression.Lambda<Action<object, object>>(assign, instanceParam, valueParam).Compile();
         }
         
-        private Action<object, object> CompileMethodInvoker(MethodInfo method)
+        private Action<object, object[]> CompileMethodInvoker(MethodInfo method)
         {
-            throw new NotImplementedException();
+            var instanceParam = Expression.Parameter(typeof(object), "instance");
+            var argsParam = Expression.Parameter(typeof(object[]), "args");
+            var castInstance = Expression.Convert(instanceParam, method.DeclaringType);
+            var parameters = method.GetParameters();
+            var argExpr = new Expression[parameters.Length];
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var index = Expression.Constant(i);
+                var access = Expression.ArrayIndex(argsParam, index);
+                argExpr[i] = Expression.Convert(access, parameters[i].ParameterType);
+            }
+            
+            var callExpr = Expression.Call(castInstance, method, argExpr);
+            return Expression.Lambda<Action<object, object[]>>(callExpr, instanceParam, argsParam).Compile();
         }
     }
 }

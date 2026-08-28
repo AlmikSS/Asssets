@@ -1,4 +1,6 @@
-﻿namespace KofeyekToolkit.Core.LifeCycle.Interfaces
+﻿using KofeyekToolkit.DI.Core;
+
+namespace KofeyekToolkit.Core.LifeCycle.Interfaces
 {
     public interface ISpawnRequest
     {

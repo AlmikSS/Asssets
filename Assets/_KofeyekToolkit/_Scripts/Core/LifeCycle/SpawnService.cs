@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using KofeyekToolkit.Core.Attributes;
 using KofeyekToolkit.Core.LifeCycle.Interfaces;
 using KofeyekToolkit.Core.LifeCycle.Requests;
 using KofeyekToolkit.Core.TickSystem;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
+using KofeyekToolkit.DI.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -20,17 +20,18 @@ namespace KofeyekToolkit.Core.LifeCycle
     /// Сервис работает через очередь запросов, что гарантирует применение всех операций
     /// спавна и деспавна в безопасном контексте (в методе Tick).
     /// </remarks>
-    [Service]
     public sealed class SpawnService : ISystemTickable
     {
         private readonly Dictionary<EntityId, ObjectPool> _pools = new();
         private readonly Queue<ISpawnRequest> _spawnQueue = new();
         private readonly Queue<GameObject> _despawnQueue = new();
         private readonly TickService _tickService;
+        private readonly DIContainer _diContainer;
 
-        public SpawnService(TickService tickService)
+        public SpawnService(TickService tickService, DIContainer diContainer)
         {
             _tickService = tickService;
+            _diContainer = diContainer;
 
             InitializePools();
         }
@@ -180,6 +181,9 @@ namespace KofeyekToolkit.Core.LifeCycle
                 NotifyComponents<ISpawnable>(instance, component => component.OnSpawn());
                 RegisterAllTickables(instance);
             }
+            
+            if (instance != null)
+                InjectAllComponents(instance);
 
             return instance;
         }
@@ -212,6 +216,9 @@ namespace KofeyekToolkit.Core.LifeCycle
                 NotifyComponents<ISpawnable>(instance, component => component.OnSpawn());
                 RegisterAllTickables(instance);
             }
+            
+            if (instance != null)
+                InjectAllComponents(instance);
 
             return instance == null ? null : instance.GetComponent<T>();
         }
@@ -250,6 +257,19 @@ namespace KofeyekToolkit.Core.LifeCycle
         {
             var tickables = gameObject.GetComponentsInChildren<ITickable>();
             UnregisterAllTickables(tickables);
+        }
+        
+        private void InjectAllComponents(GameObject root)
+        {
+            var components = root.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var component in components)
+            {
+                var metadata = TypeMetadata.Get(component.GetType());
+                if (metadata.HasInjectMembers)
+                {
+                    _diContainer.Inject(component);
+                }
+            }
         }
     }
 }

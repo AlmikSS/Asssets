@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using KofeyekToolkit.Core.Attributes;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
 using KofeyekToolkit.DevConsole;
 
@@ -15,7 +14,6 @@ namespace KofeyekToolkit.Core.TickSystem
     /// Сервис поддерживает очередь регистрации/отмены регистрации тикеров,
     /// паузу игровой логики и измерение производительности.
     /// </remarks>
-    [Service]
     public sealed class TickService
     {
         private int _tickCounter;

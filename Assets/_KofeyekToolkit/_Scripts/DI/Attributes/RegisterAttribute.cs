@@ -6,11 +6,18 @@ namespace KofeyekToolkit.DI.Attributes
     public sealed class RegisterAttribute : Attribute
     {
         public Type ContractType { get; }
-        public bool IsSingleton { get; set; } = true;
-
-        public RegisterAttribute(Type contractType = null)
+        public RegisterType RegisterType { get; set; } 
+        
+        public RegisterAttribute(Type contractType = null, RegisterType registerType = RegisterType.Singleton)
         {
             ContractType = contractType;
+            RegisterType = registerType;
         }
+    }
+
+    public enum RegisterType
+    {
+        Singleton,
+        Transient,
     }
 }
