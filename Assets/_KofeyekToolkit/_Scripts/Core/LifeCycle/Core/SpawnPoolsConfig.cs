@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KofeyekToolkit.Core.LifeCycle
+namespace KofeyekToolkit.Core.LifeCycle.Core
 {
     [CreateAssetMenu(menuName = "KofeyekToolkit/SpawnPoolsConfig")]
     public sealed class SpawnPoolsConfig : ScriptableObject

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using KofeyekToolkit.Core.LifeCycle.Interfaces;
+using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace KofeyekToolkit.Core.LifeCycle
+namespace KofeyekToolkit.Core.LifeCycle.Core
 {
     public sealed class ObjectPool : IDisposable
     {
@@ -51,6 +51,7 @@ namespace KofeyekToolkit.Core.LifeCycle
             instance.Instance.transform.SetPositionAndRotation(position, rotation);
             instance.Instance.transform.SetParent(parent);
             instance.Instance.SetActive(true);
+            _spawnService.InjectAllComponents(instance.Instance);
             _spawnService.NotifyComponents<ISpawnable>(instance.Instance, component => component.OnSpawn());
             _spawnService.RegisterAllTickables(instance.Tickables);
             return instance.Instance;

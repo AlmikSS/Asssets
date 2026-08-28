@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using KofeyekToolkit.Core.LifeCycle.Interfaces;
-using KofeyekToolkit.Core.LifeCycle.Requests;
+using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
+using KofeyekToolkit.Core.LifeCycle.Core.Requests;
 using KofeyekToolkit.Core.TickSystem;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
 using KofeyekToolkit.DI.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace KofeyekToolkit.Core.LifeCycle
+namespace KofeyekToolkit.Core.LifeCycle.Core
 {
     /// <summary>
     /// Централизованная система управления спавном и деспавном игровых объектов.
@@ -34,6 +34,21 @@ namespace KofeyekToolkit.Core.LifeCycle
             _diContainer = diContainer;
 
             InitializePools();
+        }
+
+        internal void SpawnInSceneObjects()
+        {
+            var allObjects = Object.FindObjectsByType<SceneObject>();
+
+            foreach (var obj in allObjects)
+            {
+                var instance = obj.gameObject;
+                
+                InjectAllComponents(instance);
+                NotifyComponents<IConstructable>(instance, component => component.OnConstruct());
+                NotifyComponents<ISpawnable>(instance, component => component.OnSpawn());
+                RegisterAllTickables(instance);
+            }
         }
 
         /// <summary>
@@ -177,13 +192,11 @@ namespace KofeyekToolkit.Core.LifeCycle
             else
             {
                 instance = Object.Instantiate(prefab, position, rotation, parent);
+                InjectAllComponents(instance);
                 NotifyComponents<IConstructable>(instance, component => component.OnConstruct());
                 NotifyComponents<ISpawnable>(instance, component => component.OnSpawn());
                 RegisterAllTickables(instance);
             }
-            
-            if (instance != null)
-                InjectAllComponents(instance);
 
             return instance;
         }
@@ -212,13 +225,11 @@ namespace KofeyekToolkit.Core.LifeCycle
             else
             {
                 instance = Object.Instantiate(prefab.gameObject, position, rotation, parent);
+                InjectAllComponents(instance);
                 NotifyComponents<IConstructable>(instance, component => component.OnConstruct());
                 NotifyComponents<ISpawnable>(instance, component => component.OnSpawn());
                 RegisterAllTickables(instance);
             }
-            
-            if (instance != null)
-                InjectAllComponents(instance);
 
             return instance == null ? null : instance.GetComponent<T>();
         }
@@ -259,7 +270,7 @@ namespace KofeyekToolkit.Core.LifeCycle
             UnregisterAllTickables(tickables);
         }
         
-        private void InjectAllComponents(GameObject root)
+        internal void InjectAllComponents(GameObject root)
         {
             var components = root.GetComponentsInChildren<MonoBehaviour>(true);
             foreach (var component in components)

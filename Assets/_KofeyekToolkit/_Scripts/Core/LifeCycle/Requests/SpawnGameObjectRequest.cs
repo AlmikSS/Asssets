@@ -1,8 +1,8 @@
 ﻿using System;
-using KofeyekToolkit.Core.LifeCycle.Interfaces;
+using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
 using UnityEngine;
 
-namespace KofeyekToolkit.Core.LifeCycle.Requests
+namespace KofeyekToolkit.Core.LifeCycle.Core.Requests
 {
     internal readonly struct SpawnGameObjectRequest : ISpawnRequest
     {

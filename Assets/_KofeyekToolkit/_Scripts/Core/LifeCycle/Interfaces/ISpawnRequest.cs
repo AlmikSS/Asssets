@@ -1,6 +1,6 @@
 ﻿using KofeyekToolkit.DI.Core;
 
-namespace KofeyekToolkit.Core.LifeCycle.Interfaces
+namespace KofeyekToolkit.Core.LifeCycle.Core.Interfaces
 {
     public interface ISpawnRequest
     {

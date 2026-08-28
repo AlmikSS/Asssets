@@ -1,4 +1,5 @@
-﻿using KofeyekToolkit.DI.Attributes;
+﻿using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
+using KofeyekToolkit.DI.Attributes;
 using UnityEngine;
 
 namespace KofeyekToolkit.Core.TickSystem
@@ -6,10 +7,11 @@ namespace KofeyekToolkit.Core.TickSystem
     public sealed class TickAdapter : MonoBehaviour
     {
         private TickService _tickService;
-
+        
         [Inject]
         private void Initialize(TickService tickService)
         {
+            DontDestroyOnLoad(gameObject);
             _tickService = tickService;
             Debug.Log("[TickAdapter] Initialized");
         }
