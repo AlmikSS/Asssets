@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using KofeyekToolkit.DI.Attributes;
+
+namespace KofeyekToolkit.DI.Core
+{
+    public sealed class TypeInfo
+    {
+        public ConstructorInfo Constructor { get; }
+        public Func<object[], object> ConstructorFactory { get; }
+        public List<FieldInfo> InjectFields { get; } = new();
+        public List<PropertyInfo> InjectProperties { get; } = new();
+        public List<MethodInfo> InjectMethods { get; } = new();
+        public List<Action<object, object>> FieldSetters { get; } = new();
+        public List<Action<object, object>> PropertySetters { get; } = new();
+        public List<Action<object, object>> MethodInvokers { get; } = new();
+
+        public TypeInfo(Type type)
+        {
+            var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+            Constructor = constructors.FirstOrDefault(c => c.GetCustomAttributes<InjectAttribute>() != null) ?? constructors.FirstOrDefault();
+            
+            if (Constructor != null)
+                ConstructorFactory = CompileConstructorFactory(Constructor);
+            
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            foreach (var field in type.GetFields(flags))
+            {
+                if (field.GetCustomAttribute<InjectAttribute>() == null)
+                    continue;
+                
+                InjectFields.Add(field);
+                FieldSetters.Add(CompileFieldSetter(field));
+            }
+
+            foreach (var prop in type.GetProperties(flags))
+            {
+                if (prop.GetCustomAttribute<InjectAttribute>() == null || !prop.CanWrite)
+                    continue;
+                
+                InjectProperties.Add(prop);
+                PropertySetters.Add(CompilePropertySetter(prop));
+            }
+            
+            foreach (var method in type.GetMethods(flags))
+            {
+                if (method.GetCustomAttribute<InjectAttribute>() == null) 
+                    continue;
+                
+                InjectMethods.Add(method);
+                MethodInvokers.Add(CompileMethodInvoker(method));
+            }
+        }
+
+        private Func<object[], object> CompileConstructorFactory(ConstructorInfo ctor)
+        {
+            var argsParam = Expression.Parameter(typeof(object[]), "args");
+            var parameters = ctor.GetParameters();
+            var argExpr = new Expression[parameters.Length];
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var index = Expression.Constant(i);
+                var access = Expression.ArrayIndex(argsParam, index);
+                argExpr[i] = Expression.Convert(access, parameters[i].ParameterType);
+            }
+        }
+        
+        private Action<object, object> CompileFieldSetter(FieldInfo field)
+        {
+            throw new NotImplementedException();
+        }
+        
+        private Action<object, object> CompilePropertySetter(PropertyInfo prop)
+        {
+            throw new NotImplementedException();
+        }
+        
+        private Action<object, object> CompileMethodInvoker(MethodInfo method)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
