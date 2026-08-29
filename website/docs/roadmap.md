@@ -1,10 +1,10 @@
 ---
-title: Roadmap
+title: План развития
 sidebar_position: 6
 ---
 
-# Roadmap
+# План развития
 
-The current goal is to accelerate development of small CandyCandleGames indie projects with a consistent Unity toolkit for bootstrapping, dependency injection, lifecycle, ticks, events, scenes, and developer tools.
+Текущая цель — ускорить разработку небольших инди-проектов CandyCandleGames с единым Unity-инструментарием для bootstrap, внедрения зависимостей, жизненного цикла, тиков, событий, сцен и инструментов разработчика.
 
-The toolkit will evolve toward the needs of larger projects as those needs are validated: clearer module boundaries, stronger tooling, and scalable project conventions. This is direction, not a commitment to specific features or dates.
+Инструментарий будет развиваться в сторону потребностей более крупных проектов по мере их подтверждения: более чёткие границы модулей, более сильные инструменты и масштабируемые соглашения для проектов. Это направление, а не обязательство по конкретным функциям или датам.

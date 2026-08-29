@@ -1,9 +1,9 @@
 ---
-title: Architecture
+title: Архитектура
 sidebar_position: 2
 ---
 
-# Architecture
+# Архитектура
 
 ```mermaid
 flowchart LR
@@ -13,27 +13,27 @@ flowchart LR
   B --> D
   C --> D
   D --> E[SceneSwitcher]
-  E --> F[SceneBootstrap / next scene]
+  E --> F[SceneBootstrap / следующая сцена]
 ```
 
-`AppBootstrap` is the composition root. It creates `DIContainer`, discovers registrations, constructs `TickService` and `SpawnService`, registers the services, and starts processing `SceneObject` instances. `SceneSwitcher` uses spawning and a load screen to move to the next scene. Refer to the generated [API Reference](api-reference.md) for public signatures.
+`AppBootstrap` — корень композиции. Он создаёт `DIContainer`, обнаруживает регистрации, конструирует `TickService` и `SpawnService`, регистрирует сервисы и начинает обработку экземпляров `SceneObject`. `SceneSwitcher` использует спавнинг и экран загрузки для перехода к следующей сцене. Публичные сигнатуры описаны в общей [справке API](api-reference.md), доступной на английском языке.
 
 ## Core/LifeCycle
 
-`SpawnService` owns lifecycle transitions and pooling. Components can implement construction, spawn, despawn, and destruction interfaces; scene roots are opt-in through `SceneObject`.
+`SpawnService` управляет переходами жизненного цикла и пулами. Компоненты могут реализовывать интерфейсы конструирования, спавнинга, деспавнинга и уничтожения; корневые объекты сцены подключаются через `SceneObject`.
 
 ## Core/TickSystem
 
-`TickService` queues registrations and processes system, gameplay, UI, and presentation tick layers. Gameplay uses a target tick rate; other layers follow the frame update policy.
+`TickService` ставит регистрации в очередь и обрабатывает системный, игровой, UI- и презентационный слои тиков. Для геймплея используется целевая частота тиков, остальные слои следуют политике обновления кадра.
 
 ## DI
 
-`DIContainer` scans assemblies for registration metadata, resolves contracts, and injects marked members. Application services are registered at bootstrap rather than manually looked up from gameplay code.
+`DIContainer` сканирует сборки на метаданные регистрации, разрешает контракты и внедряет отмеченные члены. Сервисы приложения регистрируются при bootstrap, а не ищутся вручную из игрового кода.
 
 ## EventSystem
 
-`EventBus` provides typed event registration, unregistration, and invocation. Event consumers own the lifetime of their subscriptions.
+`EventBus` предоставляет типизированную регистрацию, отмену регистрации и вызов событий. Потребители событий отвечают за время жизни своих подписок.
 
 ## DevConsole
 
-The developer console discovers command methods through reflection, provides command completion/execution, and displays logs through the `DevConsole` prefab.
+Консоль разработчика находит методы команд через reflection, предлагает дополнение и выполнение команд и отображает журналы через prefab `DevConsole`.

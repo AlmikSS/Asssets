@@ -1,28 +1,28 @@
 ---
-title: Developer Guide
+title: Руководство разработчика
 sidebar_position: 4
 ---
 
-# Developer Guide
+# Руководство разработчика
 
-## Dependency registration
+## Регистрация зависимостей
 
-At startup, `DIContainer` uses reflection to find `[Register]` declarations. It caches type metadata and uses `[Inject]` fields, properties, and methods to supply resolved contracts. Prefer attributes and container registration over a second service locator.
+При запуске `DIContainer` с помощью reflection находит объявления `[Register]`. Он кэширует метаданные типов и использует поля, свойства и методы с `[Inject]` для передачи разрешённых контрактов. Предпочитайте атрибуты и регистрацию в контейнере второму service locator.
 
-## Queued services
+## Сервисы с очередью
 
-`TickService` queues registration and removal so its collections are not mutated while ticks execute. `SpawnService` likewise queues spawn requests before it creates or returns instances. This protects frame iteration and makes lifecycle delivery predictable.
+`TickService` ставит регистрацию и удаление в очередь, поэтому его коллекции не изменяются во время выполнения тиков. `SpawnService` аналогично ставит запросы на спавнинг в очередь до создания или возврата экземпляров. Это защищает итерацию по кадрам и делает доставку событий жизненного цикла предсказуемой.
 
-## Lifecycle and pooling
+## Жизненный цикл и пулинг
 
-The lifecycle order for a newly created instance is **`OnConstruct → OnSpawn`**. Returning an instance runs **`OnDespawn`**; final disposal runs **`OnDestroyed`**. `ObjectPool` reuses instances and delegates those callbacks through `SpawnService` rather than bypassing the lifecycle.
+Порядок жизненного цикла нового экземпляра: **`OnConstruct → OnSpawn`**. Возврат экземпляра запускает **`OnDespawn`**; окончательное освобождение — **`OnDestroyed`**. `ObjectPool` повторно использует экземпляры и передаёт эти вызовы через `SpawnService`, не обходя жизненный цикл.
 
-## Scene switching
+## Переключение сцен
 
-`SceneSwitcher` shows the load screen, loads the target scene asynchronously, initializes its `SceneObject` instances, then calls the scene bootstrap with its arguments. Scene-specific initialization belongs in the target `SceneBootstrap`.
+`SceneSwitcher` показывает экран загрузки, асинхронно загружает целевую сцену, инициализирует её `SceneObject`, затем вызывает bootstrap сцены с его аргументами. Инициализация, специфичная для сцены, должна находиться в целевом `SceneBootstrap`.
 
-## Developer console
+## Консоль разработчика
 
-`DevConsole` uses reflection to register methods marked with the command attribute. Its registry resolves commands, the executor converts input to parameters, and the UI exposes logs and completion. Keep commands deterministic and safe for developer use.
+`DevConsole` с помощью reflection регистрирует методы, помеченные атрибутом команды. Реестр разрешает команды, исполнитель преобразует ввод в параметры, а UI показывает журналы и дополнение. Оставляйте команды детерминированными и безопасными для разработчиков.
 
-See public contracts in the [generated API](api-reference.md).
+Публичные контракты см. в общей [сгенерированной документации API](api-reference.md) на английском языке.
