@@ -7,6 +7,8 @@ sidebar_position: 6
 
 API генерируется Doxygen из публичных типов C# в `Assets/_KofeyekToolkit/_Scripts`. Из него намеренно исключены Unity packages и TextMesh Pro.
 
-Это общая техническая справка: она публикуется в одном, английском языке для обеих локалей. Откройте [сгенерированный API KofeyekToolkit](https://candycandlegames.github.io/Asssets/api/index.html), чтобы просмотреть пространства имён, типы, члены и XML-документацию.
+Это общая техническая справка: она публикуется в одном, английском языке для обеих локалей. Откройте [сгенерированный API KofeyekToolkit](/Asssets/api/index.html), чтобы просмотреть пространства имён, типы, члены и XML-документацию.
 
-Запустите `npm run docs:api` из `website/`, чтобы обновить справку; `docs:start`, `docs:build` и `docs:check` генерируют её автоматически.
+> **Для локального запуска документации используйте именно `npm run docs:start` из каталога `website/`.** Не запускайте `docusaurus start` напрямую: скрипт `docs:start` сначала генерирует и проверяет API.
+
+Чтобы обновить только API, запустите `npm run docs:api`. Скрипты `docs:start`, `docs:build` и `docs:check` также генерируют и проверяют его автоматически.
