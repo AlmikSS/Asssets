@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using KofeyekToolkit.Logging;
 
 namespace KofeyekToolkit.Events
 {
@@ -10,6 +10,11 @@ namespace KofeyekToolkit.Events
     public sealed class EventBus
     {
         private readonly Dictionary<Type, List<Delegate>> _eventHandlers = new();
+        private bool _isLoggingEnabled = true;
+
+        public bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public void EnableLogging(bool enable) => _isLoggingEnabled = enable;
 
         /// <summary>
         /// Регистрирует обработчик типизированного игрового события.
@@ -22,12 +27,12 @@ namespace KofeyekToolkit.Events
 
             if (_eventHandlers[type].Contains(handler))
             {
-                Debug.LogError($"[EventBus] Try register twice: {type.Name}");
+                Warning($"Handler is already registered for {type.Name}.");
                 return;
             }
             
             _eventHandlers[type].Add(handler);
-            Debug.Log($"[EventBus] Registered handler: {type.Name}");
+            Message($"Registered handler for {type.Name}.");
         }
 
         /// <summary>
@@ -46,7 +51,7 @@ namespace KofeyekToolkit.Events
             if (eventHandler.Count <= 0)
                 _eventHandlers.Remove(type);
             
-            Debug.Log($"[EventBus] Unregistered handler: {type.Name}");
+            Message($"Unregistered handler for {type.Name}.");
         }
 
         /// <summary>
@@ -71,9 +76,27 @@ namespace KofeyekToolkit.Events
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[EventBus] Failed to invoke handler. Error: { ex.Message }");
+                    Error($"Failed to invoke a handler for {type.Name}: {ex.Message}");
                 }
             }
+        }
+
+        private void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
         }
     }
 }

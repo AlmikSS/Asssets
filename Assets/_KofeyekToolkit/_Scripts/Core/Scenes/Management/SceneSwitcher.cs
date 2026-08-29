@@ -1,7 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using KofeyekToolkit.Core.LifeCycle.Core;
 using KofeyekToolkit.Core.Scenes.Core;
 using KofeyekToolkit.Core.Scenes.Visual;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +15,11 @@ namespace KofeyekToolkit.Core.Scenes.Management
     {
         private readonly SpawnService _spawnService;
         private readonly LoadScreen _loadScreen;
+        private bool _isLoggingEnabled = true;
+
+        public bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public void EnableLogging(bool enable) => _isLoggingEnabled = enable;
         
         /// <summary>
         /// Предоставляет API-член <c>SceneSwitcher</c>.
@@ -29,6 +35,13 @@ namespace KofeyekToolkit.Core.Scenes.Management
         /// </summary>
         public void LoadScene(string sceneName, ISceneArgs sceneArgs)
         {
+            if (string.IsNullOrWhiteSpace(sceneName))
+            {
+                Error("Cannot load a scene with an empty name.");
+                return;
+            }
+
+            Message($"Started loading scene '{sceneName}'.");
             CoroutinePerformer.Instance.StartCoroutine(LoadSceneRoutine(sceneName, sceneArgs));
         }
 
@@ -42,7 +55,33 @@ namespace KofeyekToolkit.Core.Scenes.Management
             _loadScreen.Hide();
             _spawnService.SpawnInSceneObjects();
             var bootstrap = Object.FindAnyObjectByType<SceneBootstrap>();
+            if (bootstrap == null)
+            {
+                Warning($"Scene '{sceneName}' has no SceneBootstrap.");
+                yield break;
+            }
+
             bootstrap.Initialize(sceneArgs);
+            Message($"Scene '{sceneName}' loaded and initialized.");
         }
+
+        private void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
 using KofeyekToolkit.DevConsole;
+using KofeyekToolkit.Logging;
 
 namespace KofeyekToolkit.Core.TickSystem
 {
@@ -49,6 +50,11 @@ namespace KofeyekToolkit.Core.TickSystem
         /// Признак паузы игрового канала тиков.
         /// </summary>
         public bool IsGameplayPaused { get; private set; }
+
+        /// <summary>
+        /// Определяет, выводит ли сервис диагностические сообщения.
+        /// </summary>
+        public bool IsLoggingEnabled { get; private set; } = true;
         
         /// <summary>
         /// Конструктор сервиса тиков.
@@ -60,6 +66,15 @@ namespace KofeyekToolkit.Core.TickSystem
         public TickService(int tickRate)
         {
             ChangeTickRate(tickRate);
+            Message($"Initialized with target tick rate {TargetTickRate}.");
+        }
+
+        /// <summary>
+        /// Включает или выключает диагностическое логирование этого сервиса.
+        /// </summary>
+        public void EnableLogging(bool enable)
+        {
+            IsLoggingEnabled = enable;
         }
         
         /// <summary>
@@ -70,7 +85,17 @@ namespace KofeyekToolkit.Core.TickSystem
         /// <summary>
         /// Регистрирует сервис или обработчик в контейнере.
         /// </summary>
-        public void Register(ITickable tickable) => _registerQueue.Enqueue(tickable);
+        public void Register(ITickable tickable)
+        {
+            if (tickable == null)
+            {
+                Warning("Skipped registration of a null tickable.");
+                return;
+            }
+
+            _registerQueue.Enqueue(tickable);
+            Message($"Queued registration for {tickable.GetType().Name}.");
+        }
         /// <summary>
         /// Помещает тикер в очередь на отмену регистрации.
         /// Отмена будет применена в ближайшем кадре.
@@ -79,17 +104,47 @@ namespace KofeyekToolkit.Core.TickSystem
         /// <summary>
         /// Удаляет обработчик из подписок на событие.
         /// </summary>
-        public void Unregister(ITickable tickable) => _unregisterQueue.Enqueue(tickable);
+        public void Unregister(ITickable tickable)
+        {
+            if (tickable == null)
+            {
+                Warning("Skipped unregistration of a null tickable.");
+                return;
+            }
+
+            _unregisterQueue.Enqueue(tickable);
+            Message($"Queued unregistration for {tickable.GetType().Name}.");
+        }
 
         /// <summary>
         /// Приостанавливает выполнение игровых тиков (Gameplay).
         /// Системные, UI и презентационные тики продолжают работу.
         /// </summary>
-        public void Pause() => IsGameplayPaused = true;
+        public void Pause()
+        {
+            if (IsGameplayPaused)
+            {
+                Warning("Gameplay ticks are already paused.");
+                return;
+            }
+
+            IsGameplayPaused = true;
+            Message("Gameplay ticks paused.");
+        }
         /// <summary>
         /// Возобновляет выполнение игровых тиков (Gameplay).
         /// </summary>
-        public void Resume() => IsGameplayPaused = false;
+        public void Resume()
+        {
+            if (!IsGameplayPaused)
+            {
+                Warning("Gameplay ticks are already running.");
+                return;
+            }
+
+            IsGameplayPaused = false;
+            Message("Gameplay ticks resumed.");
+        }
 
         /// <summary>
         /// Основной цикл обновления. Вызывается каждый кадр.
@@ -216,9 +271,34 @@ namespace KofeyekToolkit.Core.TickSystem
         [Command("change_tick_rate", "Изменяет целевой тикрейт игровой логики.")]
         private void ChangeTickRate(int newTickRate)
         {
+            if (newTickRate <= 0)
+            {
+                Error($"Cannot set a non-positive tick rate: {newTickRate}.");
+                return;
+            }
+
             TargetTickRate = newTickRate;
             TickInterval = 1f / newTickRate;
             _accumulator = 0f;
+            Message($"Target tick rate changed to {newTickRate}.");
+        }
+
+        private void Message(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Error(message);
         }
     }
 }

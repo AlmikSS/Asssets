@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -16,6 +17,11 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         private readonly Queue<(GameObject Instance, ITickable[] Tickables)> _poolQueue = new();
         private readonly SpawnService _spawnService;
         private readonly Transform _root;
+        private bool _isLoggingEnabled = true;
+
+        public bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public void EnableLogging(bool enable) => _isLoggingEnabled = enable;
         
         /// <summary>
         /// Создаёт пул для указанного префаба и заполняет его начальными экземплярами.
@@ -32,6 +38,8 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             {
                 SpawnInstance();
             }
+
+            Message($"Created with {capacity} preallocated instances.");
         }
         
         /// <summary>
@@ -46,6 +54,7 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             }
             
             Object.Destroy(_root);
+            Message("Disposed.");
         }
 
         /// <summary>
@@ -55,6 +64,7 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         {
             if (_poolQueue.Count <= 0)
             {
+                Warning("Pool was empty; creating an additional instance.");
                 SpawnInstance();
             }
             
@@ -81,6 +91,7 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             _spawnService.NotifyComponents<IDespawnable>(instance, component => component.OnDespawn());
             _spawnService.UnregisterAllTickables(tickables);
             _poolQueue.Enqueue((instance, tickables));
+            Message($"Returned {instance.name} to the pool.");
         }
         
         private void SpawnInstance()
@@ -91,5 +102,24 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             instance.SetActive(false);
             _spawnService.NotifyComponents<IConstructable>(instance, component => component.OnConstruct());
         }
+
+        private void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
+        }
+
     }
 }

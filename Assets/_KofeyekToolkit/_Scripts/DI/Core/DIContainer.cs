@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,6 +19,11 @@ namespace KofeyekToolkit.DI.Core
         private readonly HashSet<Type> _resolving = new();
         private readonly Dictionary<Type, Type> _implementationTypes = new();
         private bool _disposed;
+        private bool _isLoggingEnabled = true;
+
+        public bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public void EnableLogging(bool enable) => _isLoggingEnabled = enable;
 
         /// <summary>
         /// Инициализирует контейнер и подписывает его на завершение работы приложения.
@@ -26,6 +31,7 @@ namespace KofeyekToolkit.DI.Core
         public DIContainer()
         {
             Application.quitting += OnApplicationQuitting;
+            Message("Created.");
         }
 
         private void OnApplicationQuitting()
@@ -49,7 +55,7 @@ namespace KofeyekToolkit.DI.Core
             _singletonFactories.Clear();
             _resolving.Clear();
             _implementationTypes.Clear();
-            Log.Message("Disposed");
+            Message("Disposed.");
         }
         
         /// <summary>
@@ -121,7 +127,7 @@ namespace KofeyekToolkit.DI.Core
         public void RegisterInstance<TService>(TService instance)
         {
             _singletons[typeof(TService)] = instance;
-            Log.Message("Registered Instance: " + instance.GetType().Name);
+            Message("Registered instance: " + instance.GetType().Name);
             Inject(instance);
         }
         
@@ -137,7 +143,7 @@ namespace KofeyekToolkit.DI.Core
         {
             if (_resolving.Contains(serviceType))
             {
-                Log.Error($"Circular dependency detected for {serviceType}");
+                Error($"Circular dependency detected for {serviceType.Name}.");
                 return null;
             }
             _resolving.Add(serviceType);
@@ -160,7 +166,7 @@ namespace KofeyekToolkit.DI.Core
                 if (_transientFactories.TryGetValue(serviceType, out var transientFactory))
                     return transientFactory();
                 
-                Log.Error($"No registration for {serviceType}");
+                Error($"No registration for {serviceType.Name}.");
                 return null;
             }
             finally
@@ -207,7 +213,7 @@ namespace KofeyekToolkit.DI.Core
             _singletonFactories[contractType] = meta.ConstructorFactory;
             _singletons[contractType] = null;
             _implementationTypes[contractType] = implementationType;
-            Log.Message("Registered Singleton: " + implementationType.Name);
+            Message("Registered singleton: " + implementationType.Name);
         }
 
         private void RegisterTransient(Type contractType, Type implementationType)
@@ -215,7 +221,7 @@ namespace KofeyekToolkit.DI.Core
             var factory = CreateTransientFactory(implementationType);
             _transientFactories[contractType] = factory;
             _implementationTypes[contractType] = implementationType;
-            Log.Message("Registered Transient: " + implementationType.Name);
+            Message("Registered transient: " + implementationType.Name);
         }
 
         private Func<object> CreateTransientFactory(Type implType)
@@ -245,6 +251,24 @@ namespace KofeyekToolkit.DI.Core
         private Type GetImplementationType(Type contractType)
         {
             return _implementationTypes.TryGetValue(contractType, out var impl) ? impl : contractType;
+        }
+
+        private void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
         }
     }
 }

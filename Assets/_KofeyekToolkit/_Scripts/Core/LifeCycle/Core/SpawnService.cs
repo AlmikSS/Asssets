@@ -5,6 +5,7 @@ using KofeyekToolkit.Core.LifeCycle.Core.Requests;
 using KofeyekToolkit.Core.TickSystem;
 using KofeyekToolkit.Core.TickSystem.Interfaces;
 using KofeyekToolkit.DI.Core;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -29,6 +30,11 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         private readonly DIContainer _diContainer;
 
         /// <summary>
+        /// Определяет, выводит ли сервис диагностические сообщения.
+        /// </summary>
+        public bool IsLoggingEnabled { get; private set; } = true;
+
+        /// <summary>
         /// Предоставляет API-член <c>SpawnService</c>.
         /// </summary>
         public SpawnService(TickService tickService, DIContainer diContainer)
@@ -37,11 +43,22 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             _diContainer = diContainer;
 
             InitializePools();
+            Message($"Initialized with {_pools.Count} object pools.");
+        }
+
+        /// <summary>
+        /// Включает или выключает диагностическое логирование этого сервиса.
+        /// </summary>
+        public void EnableLogging(bool enable)
+        {
+            IsLoggingEnabled = enable;
         }
 
         internal void SpawnInSceneObjects()
         {
             var allObjects = Object.FindObjectsByType<SceneObject>();
+
+            Message($"Initializing {allObjects.Length} scene objects.");
 
             foreach (var obj in allObjects)
             {
@@ -67,8 +84,15 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// </summary>
         public void Spawn(GameObject prefab, Vector3 position, Quaternion rotation, Action<GameObject> action, Transform parent = null)
         {
+            if (prefab == null)
+            {
+                Error("Cannot queue a spawn request for a null GameObject prefab.");
+                return;
+            }
+
             var request = new SpawnGameObjectRequest(prefab, position, rotation, action, parent);
             _spawnQueue.Enqueue(request);
+            Message($"Queued spawn request for {prefab.name}.");
         }
 
         /// <summary>
@@ -85,8 +109,15 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// </summary>
         public void Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Action<T> action, Transform parent = null) where T : Component
         {
+            if (prefab == null)
+            {
+                Error($"Cannot queue a spawn request for a null {typeof(T).Name} prefab.");
+                return;
+            }
+
             var request = new SpawnRequest<T>(prefab, position, rotation, action, parent);
             _spawnQueue.Enqueue(request);
+            Message($"Queued spawn request for {prefab.name}.");
         }
         
         /// <summary>
@@ -99,9 +130,13 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         public void Despawn(GameObject instance)
         {
             if (instance == null)
+            {
+                Warning("Skipped despawn request for a null GameObject.");
                 return;
+            }
             
             _despawnQueue.Enqueue(instance);
+            Message($"Queued despawn request for {instance.name}.");
         }
 
         /// <summary>
@@ -127,7 +162,10 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             var poolsConfig = Resources.Load<SpawnPoolsConfig>("SpawnPoolsConfig");
 
             if (poolsConfig == null)
+            {
+                Warning("SpawnPoolsConfig was not found. Objects will be instantiated without pools.");
                 return;
+            }
             
             foreach (var config in poolsConfig.Pools)
             {
@@ -135,6 +173,8 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
                 var pool = new ObjectPool(config.Prefab, config.StartPoolSize, this);
                 _pools.Add(id, pool);
             }
+
+            Message($"Initialized {_pools.Count} object pools from SpawnPoolsConfig.");
         }
         
         private void ApplySpawnQueue()
@@ -195,7 +235,10 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         internal GameObject ExecutePhysicalSpawnGameObject(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
         {
             if (prefab == null)
+            {
+                Error("Cannot spawn a null GameObject prefab.");
                 return null;
+            }
             
             var id = prefab.GetEntityId();
             GameObject instance;
@@ -228,7 +271,10 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         internal T ExecutePhysicalSpawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent) where T : Component
         {
             if (prefab == null)
+            {
+                Error($"Cannot spawn a null {typeof(T).Name} prefab.");
                 return null;
+            }
             
             var id = prefab.gameObject.GetEntityId();
             GameObject instance = null;
@@ -296,6 +342,24 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
                     _diContainer.Inject(component);
                 }
             }
+        }
+
+        private void Message(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (IsLoggingEnabled)
+                Log.Error(message);
         }
     }
 }
