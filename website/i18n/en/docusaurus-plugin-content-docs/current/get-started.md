@@ -29,4 +29,5 @@ At runtime the toolkit registers services, starts ticking, then initializes tagg
 3. `SpawnService` processes `SceneObject` instances and runs their lifecycle.
 4. Your scene bootstrap and gameplay systems can use the public [API Reference](api-reference.md).
 
-Continue with [Architecture](architecture.md) before adding systems.
+Continue with [Architecture](architecture.md) before adding systems, then use
+the ready-to-adapt snippets in [Examples](examples.md).
