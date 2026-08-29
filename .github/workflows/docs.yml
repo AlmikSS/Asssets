@@ -39,19 +39,19 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes doxygen
       - name: Install documentation dependencies
         working-directory: website
-        run: npm install
+        run: npm ci
       - name: Generate API and build documentation
         working-directory: website
         run: npm run docs:check
       - name: Verify generated API entry point
         run: test -f website/build/api/index.html
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           path: website/build
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: check
     environment:
       name: github-pages
