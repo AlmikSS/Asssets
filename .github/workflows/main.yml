@@ -1,3 +1,0 @@
-cd website
-npm ci
-npm run docs:start
