@@ -24,6 +24,20 @@ Doxygen installation for supported development systems:
 
 `npm run docs:api` refreshes generated API files, `npm run docs:build` produces a production site, and `npm run docs:check` generates API documentation then validates a production build (including links).
 
+### Windows troubleshooting
+
+If Docusaurus reports a `Progress Plugin` validation error mentioning `name`, `color`, or `reporters`, update to the current documentation configuration, then reinstall the dependencies from scratch in PowerShell:
+
+```powershell
+cd website
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm install
+npm run docs:start
+```
+
+The project pins Webpack 5.97.1 through npm overrides because newer Webpack releases are incompatible with the progress reporter used by this Docusaurus version. Commit the newly generated `package-lock.json` after a successful install.
+
 ## Current scope
 
 This version targets Unity **6000.5.1f1** and small CandyCandleGames projects. It is a toolkit foundation, not a complete game framework or a promise of enterprise-scale features; larger-project capabilities will be introduced only as project needs validate them.
