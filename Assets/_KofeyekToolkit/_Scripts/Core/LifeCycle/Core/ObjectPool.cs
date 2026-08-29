@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace KofeyekToolkit.Core.LifeCycle.Core
 {
+    /// <summary>
+    /// Повторно использует экземпляры префаба, уменьшая количество операций создания и уничтожения объектов.
+    /// </summary>
     public sealed class ObjectPool : IDisposable
     {
         private readonly GameObject _objectPrefab;
@@ -14,6 +17,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         private readonly SpawnService _spawnService;
         private readonly Transform _root;
         
+        /// <summary>
+        /// Создаёт пул для указанного префаба и заполняет его начальными экземплярами.
+        /// </summary>
         public ObjectPool(GameObject objectPrefab, int capacity, SpawnService spawnService, Transform parent = null)
         {
             _objectPrefab = objectPrefab;
@@ -28,6 +34,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             }
         }
         
+        /// <summary>
+        /// Освобождает ресурсы и уничтожает объекты пула.
+        /// </summary>
         public void Dispose()
         {
             while (_poolQueue.Count > 0)
@@ -39,6 +48,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             Object.Destroy(_root);
         }
 
+        /// <summary>
+        /// Извлекает объект из пула и подготавливает его к использованию.
+        /// </summary>
         public GameObject Get(Vector3 position, Quaternion rotation, Transform parent = null)
         {
             if (_poolQueue.Count <= 0)
@@ -57,6 +69,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
             return instance.Instance;
         }
 
+        /// <summary>
+        /// Возвращает объект в пул.
+        /// </summary>
         public void Return(GameObject instance)
         {
             var tickables = instance.GetComponentsInChildren<ITickable>();

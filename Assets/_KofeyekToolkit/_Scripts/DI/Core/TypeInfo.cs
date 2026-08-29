@@ -7,18 +7,51 @@ using KofeyekToolkit.DI.Attributes;
 
 namespace KofeyekToolkit.DI.Core
 {
+    /// <summary>
+    /// Содержит подготовленные отражением сведения о конструкторе и членах, помеченных <see cref="InjectAttribute"/>.
+    /// </summary>
     public sealed class TypeInfo
     {
+        /// <summary>
+        /// Выбранный конструктор типа.
+        /// </summary>
         public ConstructorInfo Constructor { get; }
+        /// <summary>
+        /// Скомпилированная фабрика вызова конструктора.
+        /// </summary>
         public Func<object[], object> ConstructorFactory { get; }
+        /// <summary>
+        /// Поля, в которые требуется внедрить зависимости.
+        /// </summary>
         public List<FieldInfo> InjectFields { get; } = new();
+        /// <summary>
+        /// Свойства, в которые требуется внедрить зависимости.
+        /// </summary>
         public List<PropertyInfo> InjectProperties { get; } = new();
+        /// <summary>
+        /// Методы, вызываемые после внедрения зависимостей.
+        /// </summary>
         public List<MethodInfo> InjectMethods { get; } = new();
+        /// <summary>
+        /// Скомпилированные операции установки полей.
+        /// </summary>
         public List<Action<object, object>> FieldSetters { get; } = new();
+        /// <summary>
+        /// Скомпилированные операции установки свойств.
+        /// </summary>
         public List<Action<object, object>> PropertySetters { get; } = new();
+        /// <summary>
+        /// Скомпилированные операции вызова методов.
+        /// </summary>
         public List<Action<object, object[]>> MethodInvokers { get; } = new();
+        /// <summary>
+        /// Признак наличия членов, помеченных для внедрения.
+        /// </summary>
         public bool HasInjectMembers => InjectFields.Count > 0 || InjectProperties.Count > 0 || InjectMethods.Count > 0;
 
+        /// <summary>
+        /// Предоставляет API-член <c>TypeInfo</c>.
+        /// </summary>
         public TypeInfo(Type type)
         {
             var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);

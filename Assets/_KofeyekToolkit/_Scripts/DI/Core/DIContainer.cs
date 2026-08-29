@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace KofeyekToolkit.DI.Core
 {
+    /// <summary>
+    /// Регистрирует сервисы, создаёт их экземпляры и внедряет зависимости по атрибутам.
+    /// </summary>
     public sealed class DIContainer : IDisposable
     {
         private readonly Dictionary<Type, Func<object>> _transientFactories = new();
@@ -16,6 +19,9 @@ namespace KofeyekToolkit.DI.Core
         private readonly Dictionary<Type, Type> _implementationTypes = new();
         private bool _disposed;
 
+        /// <summary>
+        /// Инициализирует контейнер и подписывает его на завершение работы приложения.
+        /// </summary>
         public DIContainer()
         {
             Application.quitting += OnApplicationQuitting;
@@ -26,6 +32,9 @@ namespace KofeyekToolkit.DI.Core
             Dispose();
         }
 
+        /// <summary>
+        /// Освобождает ресурсы контейнера и отменяет подписку на завершение работы приложения.
+        /// </summary>
         public void Dispose()
         {
             if (_disposed)
@@ -41,11 +50,17 @@ namespace KofeyekToolkit.DI.Core
             _implementationTypes.Clear();
         }
         
+        /// <summary>
+        /// Регистрирует сервис или обработчик в контейнере.
+        /// </summary>
         public void Register<TImplementation>()
         {
             Register(typeof(TImplementation));
         }
         
+        /// <summary>
+        /// Регистрирует сервис или обработчик в контейнере.
+        /// </summary>
         public void Register(Type implementationType)
         {
             var attrs = implementationType.GetCustomAttributes<RegisterAttribute>();
@@ -64,11 +79,17 @@ namespace KofeyekToolkit.DI.Core
             }
         }
         
+        /// <summary>
+        /// Регистрирует сервис или обработчик в контейнере.
+        /// </summary>
         public void Register<TService, TImplementation>(RegisterType registerType = RegisterType.Singleton) where TImplementation : TService
         {
             Register(typeof(TService), typeof(TImplementation), registerType);
         }
 
+        /// <summary>
+        /// Регистрирует сервис или обработчик в контейнере.
+        /// </summary>
         public void Register(Type contractType, Type implementationType, RegisterType registerType)
         {
             if (registerType == RegisterType.Singleton)
@@ -77,6 +98,9 @@ namespace KofeyekToolkit.DI.Core
                 RegisterTransient(contractType, implementationType);
         }
         
+        /// <summary>
+        /// Автоматически регистрирует типы с атрибутом регистрации из указанных сборок.
+        /// </summary>
         public void RegisterServicesFromAssemblies(params Assembly[] assemblies)
         {
             foreach (var asm in assemblies)
@@ -89,6 +113,9 @@ namespace KofeyekToolkit.DI.Core
             }
         }
         
+        /// <summary>
+        /// Регистрирует готовый экземпляр как singleton и внедряет его зависимости.
+        /// </summary>
         public void RegisterInstance<TService>(TService instance)
         {
             _singletons[typeof(TService)] = instance;
@@ -96,8 +123,14 @@ namespace KofeyekToolkit.DI.Core
             Inject(instance);
         }
         
+        /// <summary>
+        /// Возвращает экземпляр зарегистрированного сервиса.
+        /// </summary>
         public T Resolve<T>() => (T)Resolve(typeof(T));
         
+        /// <summary>
+        /// Возвращает экземпляр зарегистрированного сервиса.
+        /// </summary>
         public object Resolve(Type serviceType)
         {
             if (_resolving.Contains(serviceType))
@@ -130,6 +163,9 @@ namespace KofeyekToolkit.DI.Core
             }
         }
         
+        /// <summary>
+        /// Внедряет зависимости в поля, свойства и методы целевого объекта.
+        /// </summary>
         public void Inject(object target)
         {
             var meta = TypeMetadata.Get(target.GetType());

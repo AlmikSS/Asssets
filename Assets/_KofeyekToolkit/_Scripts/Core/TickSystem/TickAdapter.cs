@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace KofeyekToolkit.Core.TickSystem
 {
+    /// <summary>
+    /// Передаёт Unity-обновления в <see cref="TickService"/>.
+    /// </summary>
     public sealed class TickAdapter : MonoBehaviour
     {
         private TickService _tickService;

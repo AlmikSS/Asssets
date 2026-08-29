@@ -12,6 +12,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core.Requests
         private readonly Action<T> _onSpawn;
         private readonly Transform _parent;
 
+        /// <summary>
+        /// Предоставляет API-член <c>SpawnRequest</c>.
+        /// </summary>
         public SpawnRequest(T prefab, Vector3 position, Quaternion rotation, Action<T> onSpawn, Transform parent)
         {
             _prefab = prefab;
@@ -22,6 +25,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core.Requests
         }
 
 
+        /// <summary>
+        /// Выполняет введённую консольную команду.
+        /// </summary>
         public void Execute(SpawnService spawnService)
         {
             var instance = spawnService.ExecutePhysicalSpawn(_prefab, _position, _rotation, _parent);

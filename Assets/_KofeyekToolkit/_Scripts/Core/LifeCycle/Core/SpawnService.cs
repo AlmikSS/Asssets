@@ -28,6 +28,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         private readonly TickService _tickService;
         private readonly DIContainer _diContainer;
 
+        /// <summary>
+        /// Предоставляет API-член <c>SpawnService</c>.
+        /// </summary>
         public SpawnService(TickService tickService, DIContainer diContainer)
         {
             _tickService = tickService;
@@ -59,6 +62,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// <param name="rotation">Поворот спавна.</param>
         /// <param name="action">Опциональный колбэк, вызываемый после спавна.</param>
         /// <param name="parent">Опциональный родительский трансформ.</param>
+        /// <summary>
+        /// Добавляет запрос на создание объекта в очередь.
+        /// </summary>
         public void Spawn(GameObject prefab, Vector3 position, Quaternion rotation, Action<GameObject> action, Transform parent = null)
         {
             var request = new SpawnGameObjectRequest(prefab, position, rotation, action, parent);
@@ -74,6 +80,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// <param name="rotation">Поворот спавна.</param>
         /// <param name="action">Опциональный колбэк, вызываемый после спавна.</param>
         /// <param name="parent">Опциональный родительский трансформ.</param>
+        /// <summary>
+        /// Добавляет запрос на создание объекта в очередь.
+        /// </summary>
         public void Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Action<T> action, Transform parent = null) where T : Component
         {
             var request = new SpawnRequest<T>(prefab, position, rotation, action, parent);
@@ -84,6 +93,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// Помещает запрос на деспавн игрового объекта в очередь на выполнение.
         /// </summary>
         /// <param name="instance">Экземпляр игрового объекта для деспавна.</param>
+        /// <summary>
+        /// Добавляет запрос на возврат объекта в пул или уничтожение.
+        /// </summary>
         public void Despawn(GameObject instance)
         {
             if (instance == null)
@@ -97,6 +109,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core
         /// Вызывается автоматически системой тиков.
         /// </summary>
         /// <param name="deltaTime">Дельта времени.</param>
+        /// <summary>
+        /// Выполняет обновление объекта с переданной дельтой времени.
+        /// </summary>
         public void Tick(float deltaTime)
         {
             ApplySpawnQueue();

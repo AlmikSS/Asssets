@@ -6,8 +6,14 @@ using UnityEngine;
 
 namespace KofeyekToolkit.DevConsole
 {
+    /// <summary>
+    /// Формирует подсказки и текст использования команд разработческой консоли.
+    /// </summary>
     public static class CommandAutoComplete
     {
+        /// <summary>
+        /// Возвращает подсказки для введённой команды.
+        /// </summary>
         public static List<CommandSuggestion> GetSuggestions(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -34,6 +40,9 @@ namespace KofeyekToolkit.DevConsole
             return suggestions;
         }
 
+        /// <summary>
+        /// Определяет индекс аргумента, который пользователь вводит сейчас.
+        /// </summary>
         public static int GetCurrentArgumentIndex(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -64,6 +73,9 @@ namespace KofeyekToolkit.DevConsole
                 usage.ToString());
         }
         
+        /// <summary>
+        /// Преобразует тип параметра в понятное для пользователя имя.
+        /// </summary>
         public static string GetFriendlyTypeName(Type type)
         {
             if (type == typeof(int)) return "int";

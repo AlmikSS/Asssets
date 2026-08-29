@@ -4,8 +4,14 @@ using UnityEngine;
 
 namespace KofeyekToolkit.DevConsole
 {
+    /// <summary>
+    /// Разбирает введённую строку консоли, преобразует аргументы и вызывает зарегистрированную команду.
+    /// </summary>
     public static class CommandExecutor
     {
+        /// <summary>
+        /// Выполняет введённую консольную команду.
+        /// </summary>
         public static void Execute(string input)
         {
             if (string.IsNullOrEmpty(input))

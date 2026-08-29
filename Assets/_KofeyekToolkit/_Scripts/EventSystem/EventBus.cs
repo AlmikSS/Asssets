@@ -4,10 +4,16 @@ using UnityEngine;
 
 namespace KofeyekToolkit.Events
 {
+    /// <summary>
+    /// Регистрирует обработчики типизированных игровых событий и безопасно уведомляет их о публикации.
+    /// </summary>
     public sealed class EventBus
     {
         private readonly Dictionary<Type, List<Delegate>> _eventHandlers = new();
 
+        /// <summary>
+        /// Регистрирует обработчик типизированного игрового события.
+        /// </summary>
         public void Register<T>(Action<T> handler) where T : IGameEvent
         {
             var type = typeof(T);
@@ -24,6 +30,9 @@ namespace KofeyekToolkit.Events
             Debug.Log($"[EventBus] Registered handler: {type.Name}");
         }
 
+        /// <summary>
+        /// Удаляет обработчик из подписок на событие.
+        /// </summary>
         public void Unregister<T>(Action<T> handler) where T : IGameEvent
         {
             if (handler == null)
@@ -40,6 +49,9 @@ namespace KofeyekToolkit.Events
             Debug.Log($"[EventBus] Unregistered handler: {type.Name}");
         }
 
+        /// <summary>
+        /// Публикует игровое событие для зарегистрированных обработчиков.
+        /// </summary>
         public void Invoke<T>(T gameEvent) where T : IGameEvent
         {
             if (gameEvent == null)

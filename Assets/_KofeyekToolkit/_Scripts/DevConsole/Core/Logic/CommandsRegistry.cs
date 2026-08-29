@@ -5,11 +5,20 @@ using System.Reflection;
 
 namespace KofeyekToolkit.DevConsole
 {
+    /// <summary>
+    /// Находит методы с атрибутом <see cref="CommandAttribute"/> и хранит их метаданные для выполнения из консоли.
+    /// </summary>
     public static class CommandsRegistry
     {
         private static readonly Dictionary<string, ConsoleCommand> _commands = new(); 
+        /// <summary>
+        /// Зарегистрированные команды, доступные для выполнения.
+        /// </summary>
         public static IReadOnlyDictionary<string, ConsoleCommand> Commands => _commands;
 
+        /// <summary>
+        /// Находит и регистрирует все методы, отмеченные атрибутом команды.
+        /// </summary>
         public static void RegisterAllCommands()
         {
             _commands.Clear();
@@ -46,6 +55,9 @@ namespace KofeyekToolkit.DevConsole
             }
         }
 
+        /// <summary>
+        /// Ищет команду по имени.
+        /// </summary>
         public static bool TryGetCommand(string commandName, out ConsoleCommand command)
         {
             return _commands.TryGetValue(commandName.ToLower(), out command);

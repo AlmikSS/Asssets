@@ -2,6 +2,9 @@
 
 namespace KofeyekToolkit.DevConsole
 {
+    /// <summary>
+    /// Перенаправляет сообщения Unity в <see cref="ConsoleLogStorage"/>.
+    /// </summary>
     public class ConsoleLogListener : MonoBehaviour
     {
         private void Awake()
