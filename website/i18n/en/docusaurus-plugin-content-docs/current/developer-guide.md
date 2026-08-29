@@ -25,4 +25,5 @@ The lifecycle order for a newly created instance is **`OnConstruct → OnSpawn`*
 
 `DevConsole` uses reflection to register methods marked with the command attribute. Its registry resolves commands, the executor converts input to parameters, and the UI exposes logs and completion. Keep commands deterministic and safe for developer use.
 
-See public contracts in the [generated API](api-reference.md).
+Ready-to-adapt snippets for DI, ticks, events, lifecycle, and commands are in
+[Examples](examples.md). See public contracts in the [generated API](api-reference.md).
