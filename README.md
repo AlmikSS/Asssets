@@ -1,54 +1,15 @@
-# CCG Toolkit
+# KofeyekToolkit
 
-CCG Toolkit is a Unity foundation maintained by CandyCandleGames for small indie projects. It provides application bootstrapping, reflection-based dependency injection, lifecycle-aware spawning and pooling, layered ticks, an event bus, scene switching, and a developer console.
+KofeyekToolkit — фундамент Unity-проектов CandyCandleGames. Он предназначен для небольших инди-игр: даёт общие механизмы для старта приложения, внедрения зависимостей, выполнения игровой логики и управления объектами. По мере подтверждённой потребности проектов тулкит развивается в сторону более крупных игр.
 
-## Documentation
+## Реализованные системы
 
-The isolated Docusaurus site lives in [`website/`](website/), so Node tooling does not alter the Unity project. Its generated C# API covers only `Assets/_KofeyekToolkit/_Scripts`.
+- `AppBootstrap` и `CoroutinePerformer` для старта приложения и корутин между сценами;
+- DI-контейнер с `RegisterAttribute` и `InjectAttribute`;
+- `TickService` с системным, gameplay, UI и presentation-каналами;
+- жизненный цикл объектов: `SpawnService`, `ObjectPool`, конфигурация пулов и lifecycle-интерфейсы;
+- типизированная шина событий `EventBus`;
+- асинхронное переключение сцен через `SceneSwitcher`, `SceneBootstrap` и `LoadScreen`;
+- developer console: регистрация и выполнение команд, автодополнение и журнал Unity-логов.
 
-### Local launch
-
-Install Node.js 18+ and the **system** dependency Doxygen, then run:
-
-```bash
-cd website
-npm ci
-npm run docs:start
-```
-
-Doxygen installation for supported development systems:
-
-- **Ubuntu/Debian:** `sudo apt-get install doxygen`
-- **macOS (Homebrew):** `brew install doxygen`
-- **Windows (Chocolatey):** `choco install doxygen.install`
-
-`npm run docs:api` refreshes generated API files, `npm run docs:build` produces a production site, and `npm run docs:check` generates API documentation then validates a production build (including links).
-
-This local development cycle is isolated from Unity: `website/build`, `website/node_modules`, `website/static/api`, and `website/static/xml` are generated files and are not committed. Running these commands does not modify Unity files.
-
-## Публикация на GitHub Pages
-
-1. В репозитории откройте **Settings → Pages** и в разделе **Build and deployment** выберите источник **GitHub Actions**.
-2. Убедитесь, что имя репозитория совпадает со значением `projectName`, а `baseUrl` в `website/docusaurus.config.ts` использует это же имя репозитория (например, `projectName: 'Asssets'` и `baseUrl: '/Asssets/'`).
-3. Выполните первый push в ветку `main`.
-4. Дождитесь успешного завершения workflow **Documentation** на вкладке **Actions**.
-5. Откройте опубликованный URL GitHub Pages, который будет показан в **Settings → Pages** и в результате шага deploy workflow.
-
-Изменения в документации и C# исходниках автоматически запускают workflow **Documentation** по уже настроенным `paths`; pull request проходит сборку как проверку, но не публикуется.
-
-### Windows troubleshooting
-
-If Docusaurus reports a `Progress Plugin` validation error mentioning `name`, `color`, or `reporters`, update to the current documentation configuration, then reinstall the dependencies from scratch in PowerShell:
-
-```powershell
-cd website
-Remove-Item -Recurse -Force node_modules
-npm ci
-npm run docs:start
-```
-
-The project pins Webpack 5.97.1 through npm overrides because newer Webpack releases are incompatible with the progress reporter used by this Docusaurus version.
-
-## Current scope
-
-This version targets Unity **6000.5.1f1** and small CandyCandleGames projects. It is a toolkit foundation, not a complete game framework or a promise of enterprise-scale features; larger-project capabilities will be introduced only as project needs validate them.
+Исходники находятся в [`Assets/_KofeyekToolkit/_Scripts`](Assets/_KofeyekToolkit/_Scripts). Статичная документация для GitHub Pages находится в [`docs-site/`](docs-site/); инструкция публикации — в [`docs-site/README.md`](docs-site/README.md).
