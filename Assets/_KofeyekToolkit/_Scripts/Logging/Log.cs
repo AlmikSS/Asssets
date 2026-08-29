@@ -80,6 +80,9 @@ namespace KofeyekToolkit.Logging
         
         private static void Write(string msg, string filePath, LogLevel level)
         {
+            if (!_isInitialized)
+                Initialize();
+            
             var sender = Path.GetFileNameWithoutExtension(filePath);
             var dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var log = $"[{sender}]:[{dateTime}] - {msg}";
