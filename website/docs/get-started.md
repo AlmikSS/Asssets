@@ -1,32 +1,32 @@
 ---
-title: Get Started
+title: Быстрый старт
 sidebar_position: 1
 ---
 
-# Get Started
+# Быстрый старт
 
-CCG Toolkit is the shared foundation for small CandyCandleGames Unity projects. This repository uses **Unity 6000.5.1f1**; use the same editor version when opening it.
+CCG Toolkit — общая основа для небольших Unity-проектов CandyCandleGames. В репозитории используется **Unity 6000.5.1f1**; открывайте проект в той же версии редактора.
 
-## Open the project
+## Откройте проект
 
-1. Clone the repository and open its root directory in Unity Hub.
-2. Select Unity **6000.5.1f1** when Hub asks for an editor.
-3. Let Unity restore packages, then open `Assets/_KofeyekToolkit/Scenes/SampleScene.unity` or add the toolkit objects to your own bootstrap scene.
+1. Клонируйте репозиторий и откройте его корневую директорию в Unity Hub.
+2. Когда Hub предложит выбрать редактор, укажите Unity **6000.5.1f1**.
+3. Дождитесь восстановления пакетов, затем откройте `Assets/_KofeyekToolkit/Scenes/SampleScene.unity` или добавьте объекты инструментария в собственную сцену инициализации.
 
-## Scene setup
+## Настройка сцены
 
-- **`AppBootstrap`** is the global runtime entry point. It builds the container, creates services, and discovers scene objects after the scene loads.
-- Add **`SceneObject`** to a root object that must be spawned/constructed as part of scene initialization.
-- Create a **`SpawnPoolsConfig`** asset to declare prefab pools and capacities used by spawning.
-- Place the **`DevConsole` prefab** from `Assets/_KofeyekToolkit/Prefabs/Console/DevConsole.prefab` in a scene when developer commands and log UI are needed.
+- **`AppBootstrap`** — глобальная точка входа во время выполнения. Он создаёт контейнер, сервисы и обнаруживает объекты сцены после её загрузки.
+- Добавьте **`SceneObject`** к корневому объекту, который должен быть создан или активирован при инициализации сцены.
+- Создайте asset **`SpawnPoolsConfig`**, чтобы объявить пулы prefab-объектов и их ёмкости для спавнинга.
+- Поместите prefab **`DevConsole`** из `Assets/_KofeyekToolkit/Prefabs/Console/DevConsole.prefab` в сцену, когда нужны команды разработчика и интерфейс журналов.
 
-## Startup order
+## Порядок запуска
 
-At runtime the toolkit registers services, starts ticking, then initializes tagged scene objects:
+Во время выполнения инструментарий регистрирует сервисы, запускает тики, а затем инициализирует отмеченные объекты сцены:
 
-1. `AppBootstrap` creates the DI container and registers services.
-2. `TickService`, `SpawnService`, and scene switching support are configured.
-3. `SpawnService` processes `SceneObject` instances and runs their lifecycle.
-4. Your scene bootstrap and gameplay systems can use the public [API Reference](api-reference.md).
+1. `AppBootstrap` создаёт DI-контейнер и регистрирует сервисы.
+2. Настраиваются `TickService`, `SpawnService` и поддержка переключения сцен.
+3. `SpawnService` обрабатывает экземпляры `SceneObject` и запускает их жизненный цикл.
+4. Bootstrap сцены и игровые системы могут использовать публичный [API Reference](api-reference.md).
 
-Continue with [Architecture](architecture.md) before adding systems.
+Перед добавлением систем прочитайте раздел [Архитектура](architecture.md).
