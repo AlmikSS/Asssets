@@ -1,0 +1,14 @@
+:root {
+  --ifm-color-primary: #c85a31;
+  --ifm-color-primary-dark: #ad4823;
+  --ifm-color-primary-darker: #a34321;
+  --ifm-color-primary-light: #dd704a;
+  --ifm-code-font-size: 95%;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #f2a16f;
+  --ifm-background-color: #17120f;
+}
+
+.mermaid { text-align: center; }

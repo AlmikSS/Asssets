@@ -105,3 +105,9 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Generated documentation artifacts
+/website/node_modules/
+/website/build/
+/website/static/api/
+/website/static/xml/
