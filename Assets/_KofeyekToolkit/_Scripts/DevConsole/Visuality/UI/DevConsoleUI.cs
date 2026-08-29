@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using TriInspector;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 
 namespace KofeyekToolkit.DevConsole
@@ -29,11 +30,15 @@ namespace KofeyekToolkit.DevConsole
         private readonly List<string> _commandsHistory = new();
         private int _currentCommandIndex = -1;
         private string _currentInputBuffer;
+        private bool _isLoggingEnabled = true;
         
         /// <summary>
         /// Признак того, что интерфейс консоли открыт.
         /// </summary>
         public bool IsOpened { get; private set; }
+        public bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public void EnableLogging(bool enable) => _isLoggingEnabled = enable;
         
         /// <summary>
         /// Открывает интерфейс разработческой консоли.
@@ -43,6 +48,7 @@ namespace KofeyekToolkit.DevConsole
             _root.SetActive(true);
             _inputField.ActivateInputField();
             IsOpened = true;
+            Message("Opened.");
         }
 
         /// <summary>
@@ -52,6 +58,7 @@ namespace KofeyekToolkit.DevConsole
         {
             _root.SetActive(false);
             IsOpened = false;
+            Message("Closed.");
         }
 
         private void Start()
@@ -213,8 +220,27 @@ namespace KofeyekToolkit.DevConsole
         {
             foreach (var command in CommandsRegistry.Commands.Values)
             {
-                Debug.Log($"'{command.Name}': {command.Description}'");
+                Message($"{command.Name}: {command.Description}");
             }
         }
+
+        private void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
+        }
+
     }
 }

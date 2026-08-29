@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEngine;
+using KofeyekToolkit.Logging;
 
 namespace KofeyekToolkit.DevConsole
 {
@@ -9,6 +10,12 @@ namespace KofeyekToolkit.DevConsole
     /// </summary>
     public static class CommandExecutor
     {
+        private static bool _isLoggingEnabled = true;
+
+        public static bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public static void EnableLogging(bool enable) => _isLoggingEnabled = enable;
+
         /// <summary>
         /// Выполняет введённую консольную команду.
         /// </summary>
@@ -23,13 +30,13 @@ namespace KofeyekToolkit.DevConsole
 
             if (!CommandsRegistry.TryGetCommand(commandName, out var command))
             {
-                Debug.LogError($"Unknown command name: {commandName}");
+                Warning($"Command '{commandName}' was not found.");
                 return;
             }
 
             if (args.Length != command.Parameters.Length)
             {
-                Debug.LogError($"Invalid number of arguments: {command.Parameters.Length}");
+                Warning($"Command '{commandName}' expects {command.Parameters.Length} arguments, received {args.Length}.");
                 return;
             }
 
@@ -43,10 +50,11 @@ namespace KofeyekToolkit.DevConsole
                 }
                 
                 command.Method.Invoke(command.Target, convertedArgs);
+                Message($"Executed command '{commandName}'.");
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                Error($"Command '{commandName}' failed: {e.Message}");
             }
         }
         
@@ -73,7 +81,7 @@ namespace KofeyekToolkit.DevConsole
             if (type.IsEnum)
                 return Enum.Parse(type, arg, true);
             
-            Debug.LogError($"Unsupported parameter type: {type.Name}");
+            Error($"Unsupported parameter type: {type.Name}.");
             return null;
         }
         
@@ -102,6 +110,24 @@ namespace KofeyekToolkit.DevConsole
                 float.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture),
                 float.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture)
             );
+        }
+
+        private static void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private static void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private static void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
         }
     }
 }

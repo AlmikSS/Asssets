@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using KofeyekToolkit.Logging;
 
 namespace KofeyekToolkit.DevConsole
 {
@@ -11,10 +12,14 @@ namespace KofeyekToolkit.DevConsole
     public static class CommandsRegistry
     {
         private static readonly Dictionary<string, ConsoleCommand> _commands = new(); 
+        private static bool _isLoggingEnabled = true;
         /// <summary>
         /// Зарегистрированные команды, доступные для выполнения.
         /// </summary>
         public static IReadOnlyDictionary<string, ConsoleCommand> Commands => _commands;
+        public static bool IsLoggingEnabled => _isLoggingEnabled;
+
+        public static void EnableLogging(bool enable) => _isLoggingEnabled = enable;
 
         /// <summary>
         /// Находит и регистрирует все методы, отмеченные атрибутом команды.
@@ -22,6 +27,7 @@ namespace KofeyekToolkit.DevConsole
         public static void RegisterAllCommands()
         {
             _commands.Clear();
+            Message("Searching for command methods.");
 
             var methods = AppDomain.CurrentDomain.GetAssemblies().
                 SelectMany(a => a.GetTypes()).
@@ -53,6 +59,8 @@ namespace KofeyekToolkit.DevConsole
                 
                 _commands.Add(command.Name, command);
             }
+
+            Message($"Registered {_commands.Count} commands.");
         }
 
         /// <summary>
@@ -62,5 +70,24 @@ namespace KofeyekToolkit.DevConsole
         {
             return _commands.TryGetValue(commandName.ToLower(), out command);
         }
+
+        private static void Message(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Message(message);
+        }
+
+        private static void Warning(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Warning(message);
+        }
+
+        private static void Error(string message)
+        {
+            if (_isLoggingEnabled)
+                Log.Error(message);
+        }
+
     }
 }
