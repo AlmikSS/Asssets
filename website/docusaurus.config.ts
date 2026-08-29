@@ -6,7 +6,7 @@ const apiReferenceUrl = '/Asssets/api/index.html';
 const config: Config = {
   title: 'CCG Toolkit',
   tagline: 'Toolkit documentation for CandyCandleGames Unity projects',
-  url: 'https://candycandlegames.github.io',
+  url: 'https://almikss.github.io',
   baseUrl: '/Asssets/',
   organizationName: 'AlmikSS',
   projectName: 'Asssets',
