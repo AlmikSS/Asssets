@@ -43,6 +43,8 @@ jobs:
       - name: Generate API and build documentation
         working-directory: website
         run: npm run docs:check
+      - name: Verify generated API entry point
+        run: test -f website/build/api/index.html
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:

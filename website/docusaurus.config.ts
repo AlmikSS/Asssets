@@ -1,6 +1,8 @@
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+const apiReferenceUrl = '/Asssets/api/index.html';
+
 const config: Config = {
   title: 'CCG Toolkit',
   tagline: 'Toolkit documentation for CandyCandleGames Unity projects',
@@ -38,7 +40,7 @@ const config: Config = {
       title: 'CCG Toolkit',
       items: [
         {type: 'docSidebar', sidebarId: 'toolkitSidebar', position: 'left', label: 'Руководство'},
-        {href: 'https://candycandlegames.github.io/Asssets/api/index.html', label: 'API (английский)', position: 'right'},
+        {href: apiReferenceUrl, label: 'API (английский)', position: 'right'},
         {type: 'localeDropdown', position: 'right'},
       ],
     },
