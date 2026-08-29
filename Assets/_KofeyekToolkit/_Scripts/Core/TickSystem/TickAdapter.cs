@@ -1,5 +1,5 @@
-﻿using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
-using KofeyekToolkit.DI.Attributes;
+﻿using KofeyekToolkit.DI.Attributes;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 
 namespace KofeyekToolkit.Core.TickSystem
@@ -16,15 +16,12 @@ namespace KofeyekToolkit.Core.TickSystem
         {
             DontDestroyOnLoad(gameObject);
             _tickService = tickService;
-            Debug.Log("[TickAdapter] Initialized");
+            Log.Message("Initialized");
         }
 
         private void Update()
         {
-            if (_tickService == null)
-                return;
-            
-            _tickService.Update(Time.unscaledDeltaTime);
+            _tickService?.Update(Time.unscaledDeltaTime);
         }
     }
 }

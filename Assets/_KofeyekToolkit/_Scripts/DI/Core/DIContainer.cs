@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using KofeyekToolkit.DI.Attributes;
+using KofeyekToolkit.Logging;
 using UnityEngine;
 
 namespace KofeyekToolkit.DI.Core
@@ -48,6 +49,7 @@ namespace KofeyekToolkit.DI.Core
             _singletonFactories.Clear();
             _resolving.Clear();
             _implementationTypes.Clear();
+            Log.Message("Disposed");
         }
         
         /// <summary>
@@ -119,7 +121,7 @@ namespace KofeyekToolkit.DI.Core
         public void RegisterInstance<TService>(TService instance)
         {
             _singletons[typeof(TService)] = instance;
-            Debug.Log("[DIContainer] Registered Instance: " + instance.GetType().FullName);
+            Log.Message("Registered Instance: " + instance.GetType().Name);
             Inject(instance);
         }
         
@@ -134,7 +136,10 @@ namespace KofeyekToolkit.DI.Core
         public object Resolve(Type serviceType)
         {
             if (_resolving.Contains(serviceType))
-                throw new InvalidOperationException($"Circular dependency detected for {serviceType}");
+            {
+                Log.Error($"Circular dependency detected for {serviceType}");
+                return null;
+            }
             _resolving.Add(serviceType);
             try
             {
@@ -155,7 +160,8 @@ namespace KofeyekToolkit.DI.Core
                 if (_transientFactories.TryGetValue(serviceType, out var transientFactory))
                     return transientFactory();
                 
-                throw new InvalidOperationException($"No registration for {serviceType}");
+                Log.Error($"No registration for {serviceType}");
+                return null;
             }
             finally
             {
@@ -201,7 +207,7 @@ namespace KofeyekToolkit.DI.Core
             _singletonFactories[contractType] = meta.ConstructorFactory;
             _singletons[contractType] = null;
             _implementationTypes[contractType] = implementationType;
-            Debug.Log("[DIContainer] Registered Singleton: " + implementationType.FullName);
+            Log.Message("Registered Singleton: " + implementationType.Name);
         }
 
         private void RegisterTransient(Type contractType, Type implementationType)
@@ -209,7 +215,7 @@ namespace KofeyekToolkit.DI.Core
             var factory = CreateTransientFactory(implementationType);
             _transientFactories[contractType] = factory;
             _implementationTypes[contractType] = implementationType;
-            Debug.Log("[DIContainer] Registered Transient: " + implementationType.FullName);
+            Log.Message("Registered Transient: " + implementationType.Name);
         }
 
         private Func<object> CreateTransientFactory(Type implType)
