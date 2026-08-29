@@ -8,7 +8,7 @@ const config: Config = {
   tagline: 'Toolkit documentation for CandyCandleGames Unity projects',
   url: 'https://candycandlegames.github.io',
   baseUrl: '/Asssets/',
-  organizationName: 'CandyCandleGames',
+  organizationName: 'AlmikSS',
   projectName: 'Asssets',
   i18n: {
     defaultLocale: 'ru',
