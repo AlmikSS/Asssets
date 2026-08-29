@@ -1,0 +1,27 @@
+{
+  "id": "developer-guide",
+  "title": "Developer Guide",
+  "description": "Dependency registration",
+  "source": "@site/docs/developer-guide.md",
+  "sourceDirName": ".",
+  "slug": "/developer-guide",
+  "permalink": "/Asssets/developer-guide",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "title": "Developer Guide",
+    "sidebar_position": 4
+  },
+  "sidebar": "toolkitSidebar",
+  "previous": {
+    "title": "Toolkit Rules",
+    "permalink": "/Asssets/rules"
+  },
+  "next": {
+    "title": "API Reference",
+    "permalink": "/Asssets/api-reference"
+  }
+}
