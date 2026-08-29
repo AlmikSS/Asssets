@@ -12,6 +12,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core.Requests
         private readonly Transform _parent;
         private readonly Action<GameObject> _onSpawned;
 
+        /// <summary>
+        /// Предоставляет API-член <c>SpawnGameObjectRequest</c>.
+        /// </summary>
         public SpawnGameObjectRequest(GameObject prefab, Vector3 position, Quaternion rotation, Action<GameObject> onSpawned, Transform parent)
         {
             _prefab = prefab;
@@ -21,6 +24,9 @@ namespace KofeyekToolkit.Core.LifeCycle.Core.Requests
             _onSpawned = onSpawned;
         }
 
+        /// <summary>
+        /// Выполняет введённую консольную команду.
+        /// </summary>
         public void Execute(SpawnService spawnService)
         {
             var instance = spawnService.ExecutePhysicalSpawnGameObject(_prefab, _position, _rotation, _parent);

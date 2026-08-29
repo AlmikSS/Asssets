@@ -29,16 +29,34 @@ namespace KofeyekToolkit.Core.TickSystem
         private readonly Queue<ITickable> _registerQueue = new();
         private readonly Queue<ITickable> _unregisterQueue = new();
 
+        /// <summary>
+        /// Целевой тикрейт игровой логики.
+        /// </summary>
         public int TargetTickRate { get; private set; }
+        /// <summary>
+        /// Фактически измеренный тикрейт игровой логики.
+        /// </summary>
         public int RealTickRate { get; private set; }
+        /// <summary>
+        /// Время выполнения игрового тика в миллисекундах.
+        /// </summary>
         public float TickExecutionTimeMs { get; private set; }
+        /// <summary>
+        /// Интервал между игровыми тиками в секундах.
+        /// </summary>
         public float TickInterval { get; private set; }
+        /// <summary>
+        /// Признак паузы игрового канала тиков.
+        /// </summary>
         public bool IsGameplayPaused { get; private set; }
         
         /// <summary>
         /// Конструктор сервиса тиков.
         /// </summary>
         /// <param name="tickRate">Целевое количество тиков в секунду для игровой логики.</param>
+        /// <summary>
+        /// Предоставляет API-член <c>TickService</c>.
+        /// </summary>
         public TickService(int tickRate)
         {
             ChangeTickRate(tickRate);
@@ -49,12 +67,18 @@ namespace KofeyekToolkit.Core.TickSystem
         /// Регистрация будет применена в ближайшем кадре.
         /// </summary>
         /// <param name="tickable">Объект, реализующий интерфейс ITickable.</param>
+        /// <summary>
+        /// Регистрирует сервис или обработчик в контейнере.
+        /// </summary>
         public void Register(ITickable tickable) => _registerQueue.Enqueue(tickable);
         /// <summary>
         /// Помещает тикер в очередь на отмену регистрации.
         /// Отмена будет применена в ближайшем кадре.
         /// </summary>
         /// <param name="tickable">Объект, реализующий интерфейс ITickable.</param>
+        /// <summary>
+        /// Удаляет обработчик из подписок на событие.
+        /// </summary>
         public void Unregister(ITickable tickable) => _unregisterQueue.Enqueue(tickable);
 
         /// <summary>

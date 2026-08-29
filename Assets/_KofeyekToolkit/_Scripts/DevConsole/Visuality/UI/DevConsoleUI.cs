@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace KofeyekToolkit.DevConsole
 {
+    /// <summary>
+    /// Управляет пользовательским интерфейсом разработческой консоли, журналом, историей и подсказками команд.
+    /// </summary>
     public class DevConsoleUI : MonoBehaviour
     {
         [Title("DevConsoleUI")]
@@ -27,8 +30,14 @@ namespace KofeyekToolkit.DevConsole
         private int _currentCommandIndex = -1;
         private string _currentInputBuffer;
         
+        /// <summary>
+        /// Признак того, что интерфейс консоли открыт.
+        /// </summary>
         public bool IsOpened { get; private set; }
         
+        /// <summary>
+        /// Открывает интерфейс разработческой консоли.
+        /// </summary>
         public void Open()
         {
             _root.SetActive(true);
@@ -36,6 +45,9 @@ namespace KofeyekToolkit.DevConsole
             IsOpened = true;
         }
 
+        /// <summary>
+        /// Закрывает интерфейс разработческой консоли.
+        /// </summary>
         public void Close()
         {
             _root.SetActive(false);
