@@ -1,0 +1,4 @@
+cd website
+Remove-Item -Recurse -Force node_modules
+npm ci
+npm run docs:start
