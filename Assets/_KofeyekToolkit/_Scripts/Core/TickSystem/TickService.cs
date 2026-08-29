@@ -20,7 +20,8 @@ namespace KofeyekToolkit.Core.TickSystem
         private int _tickCounter;
         private float _accumulator;
         private float _tickTimer;
-        private readonly Stopwatch _stopwatch = new Stopwatch();
+        private bool _ticksStarted;
+        private readonly Stopwatch _stopwatch = new();
         
         private readonly List<ISystemTickable> _systems = new();
         private readonly List<IGameplayTickable> _gameplay = new();
@@ -55,6 +56,8 @@ namespace KofeyekToolkit.Core.TickSystem
         /// Определяет, выводит ли сервис диагностические сообщения.
         /// </summary>
         public bool IsLoggingEnabled { get; private set; } = true;
+
+        public TickService() { }
         
         /// <summary>
         /// Конструктор сервиса тиков.
@@ -75,6 +78,12 @@ namespace KofeyekToolkit.Core.TickSystem
         public void EnableLogging(bool enable)
         {
             IsLoggingEnabled = enable;
+        }
+
+        internal void EnableTicking(bool enable)
+        {
+            _ticksStarted = enable;
+            Message(enable ? "Ticks started." : "Ticks stopped.");
         }
         
         /// <summary>
@@ -154,6 +163,9 @@ namespace KofeyekToolkit.Core.TickSystem
         /// <param name="unscaledDeltaTime">Неизменяемая дельта времени (не зависит от Time.timeScale).</param>
         internal void Update(float unscaledDeltaTime)
         {
+            if (!_ticksStarted)
+                return;
+            
             _tickTimer += unscaledDeltaTime;
             if (_tickTimer >= 1f)
             {

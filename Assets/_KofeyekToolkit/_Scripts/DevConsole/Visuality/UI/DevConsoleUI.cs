@@ -1,5 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using KofeyekToolkit.Core.LifeCycle.Core.Interfaces;
+using KofeyekToolkit.Core.TickSystem.Interfaces;
 using TMPro;
 using TriInspector;
 using KofeyekToolkit.Logging;
@@ -10,7 +12,7 @@ namespace KofeyekToolkit.DevConsole
     /// <summary>
     /// Управляет пользовательским интерфейсом разработческой консоли, журналом, историей и подсказками команд.
     /// </summary>
-    public class DevConsoleUI : MonoBehaviour
+    public class DevConsoleUI : MonoBehaviour, ISystemTickable, IConstructable, IDestroyable
     {
         [Title("DevConsoleUI")]
         [SerializeField] private GameObject _root;
@@ -61,21 +63,22 @@ namespace KofeyekToolkit.DevConsole
             Message("Closed.");
         }
 
-        private void Start()
+        public void OnConstruct()
         {
+            DontDestroyOnLoad(gameObject);
             _inputField.onValueChanged.AddListener(OnInputChanged);
             _inputField.onSubmit.AddListener(OnInputSubmit);
             ConsoleLogStorage.LogAddedEvent += OnLogAdded;
         }
 
-        private void OnDestroy()
+        public void OnDestroyed()
         {
             _inputField.onValueChanged.RemoveListener(OnInputChanged);
             _inputField.onSubmit.RemoveListener(OnInputSubmit);
             ConsoleLogStorage.LogAddedEvent -= OnLogAdded;
         }
 
-        private void Update()
+        public void Tick(float deltaTime)
         {
             if (!_inputField.isFocused)
                 return;
@@ -241,6 +244,5 @@ namespace KofeyekToolkit.DevConsole
             if (_isLoggingEnabled)
                 Log.Error(message);
         }
-
     }
 }

@@ -885,6 +885,7 @@ GameObject:
   - component: {fileID: 1212785937482050748}
   - component: {fileID: 149223983809696155}
   - component: {fileID: 567469054934532949}
+  - component: {fileID: 1053603535931093753}
   m_Layer: 0
   m_Name: DevConsole
   m_TagString: Untagged
@@ -900,7 +901,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5140472248866076498}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -921,7 +922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tools.DevConsole.DevConsoleUI
   _root: {fileID: 4887582568687894875}
-  _commandHistoryLimit: 100
+  _commandHistoryLimit: 150
   _logHistoryLimit: 10
   _inputField: {fileID: 1920634618533153282}
   _logPrefab: {fileID: 7499529082749684507, guid: b3bf7b06ee206c44380aba948d05188f, type: 3}
@@ -941,6 +942,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad40dea8b4594becb46d65a2cce52f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tools.DevConsole.ConsoleLogListener
+--- !u!114 &1053603535931093753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5140472248866076498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b464ce9a2e1449e894ba1f805e788f82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KofeyekToolkit.Core.LifeCycle.Core.SceneObject
 --- !u!1 &5946404534737913618
 GameObject:
   m_ObjectHideFlags: 0

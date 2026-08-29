@@ -90,13 +90,13 @@ namespace KofeyekToolkit.Logging
             switch (level)
             {
                 case LogLevel.Log:
-                    Debug.Log(log);
+                    Debug.Log($"<color=#00BFFF>{log}</color>");
                     break;
                 case LogLevel.Warning:
-                    Debug.LogWarning(log);
+                    Debug.LogWarning($"<color=#FFA500>{log}</color>");
                     break;
                 case LogLevel.Error:
-                    Debug.LogError(log);
+                    Debug.LogError($"<color=#FF4444>{log}</color>");
                     break;
             }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KofeyekToolkit.Core.LifeCycle.Core
 {
-    [CreateAssetMenu(menuName = "KofeyekToolkit/SpawnPoolsConfig")]
+    [CreateAssetMenu(fileName = "SpawnPoolsConfig", menuName = "KofeyekToolkit/SpawnPoolsConfig")]
     /// <summary>
     /// Хранит настраиваемые в Unity параметры пулов префабов для <see cref="SpawnService"/>.
     /// </summary>
