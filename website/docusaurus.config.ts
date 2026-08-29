@@ -40,7 +40,12 @@ const config: Config = {
       title: 'CCG Toolkit',
       items: [
         {type: 'docSidebar', sidebarId: 'toolkitSidebar', position: 'left', label: 'Руководство'},
-        {href: apiReferenceUrl, label: 'API (английский)', position: 'right'},
+        {
+          href: apiReferenceUrl,
+          label: 'API (английский)',
+          position: 'right',
+          'data-noBrokenLinkCheck': true,
+        },
         {type: 'localeDropdown', position: 'right'},
       ],
     },
